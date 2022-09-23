@@ -1,0 +1,3 @@
+db.sqlite3
+garbage_venv/
+convert_db_mongo.py
