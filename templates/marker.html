@@ -5,10 +5,13 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Status of Bin Garbage Level</title>
-</head>
-
-<body>
+    <title>Bản đồ thùng rác</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
+        integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <style>
         html,
         body,
@@ -23,124 +26,166 @@
             position: relative;
         }
     </style>
+</head>
+
+<body>
     <div id="map"></div>
-    <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
 
-    <!-- <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyB6s7DSe9M6MZk7g77cMTuoqIO6d-ebKwI",
-            authDomain: "garbage-truck-monitoring.firebaseapp.com",
-            databaseURL: "https://garbage-truck-monitoring.firebaseio.com",
-            projectId: "garbage-truck-monitoring",
-            storageBucket: "garbage-truck-monitoring.appspot.com",
-            messagingSenderId: "549306067582",
-            appId: "1:549306067582:web:bbaeac9ec829045099c62f",
-            measurementId: "G-X9JCRW3TR0"
-        };
-        // Initialize Firebase
-
-        firebase.initializeApp(firebaseConfig);
-
-    </script> -->
     <script type="text/javascript">
-        function initMap() {
-            var cap_20 = {{ cap_20| safe }};
-            var cap_20_70 = {{ cap_20_70| safe }};
-            var cap_70 = {{ cap_70| safe }};
-            console.log(cap_20, cap_20_70, cap_70)
-            var map = new google.maps.Map(document.getElementById('map'),
-            {
-                zoom: 14, center: new google.maps.LatLng(18.5680052, 73.9873692), mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
-            var infowindow = new google.maps.InfoWindow();
-            var marker1, i, marker, marker2;
-            for (i = 0; i < cap_20.length; i++) {
-                console.log(cap_20[i][0], cap_20[i][1])
-                marker2 = new google.maps.Marker(
-                {
-                    position: new google.maps.LatLng(cap_20[i][0], cap_20[i][1]),
-                    map: map,
-                    icon: "{% static 'img/green_bin.jpg' %}"
-                });
-            }
+        var cap_20 = {{ cap_20| safe }};
+        var cap_20_70 = {{ cap_20_70| safe }};
+        var cap_70 = {{ cap_70| safe }};
+        var dump = {{ dump| safe }};
+        var depot = {{ depot| safe }};
+        console.log(cap_20, cap_20_70, cap_70)
+        let map = L.map('map').setView([21.018915, 105.839723], 15);
 
+        let osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        osm.addTo(map)
 
-            for (i = 0; i < cap_70.length; i++) {
-                console.log(cap_70[i][0], cap_70[i][1])
-                marker1 = new google.maps.Marker(
-                {
-                    position: new google.maps.LatLng(cap_70[i][0], cap_70[i][1]),
-                    map: map,
-                    icon: "{% static 'img/red_bin (2).jpg' %}"
-                });
-            }
+        googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        let Stadia_Outdoors = L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+});
+
+        let baseMaps = {
+            "OSM": osm,
+            "Google Street": googleStreets,
+            "Stadia_Outdoors": Stadia_Outdoors
+        }
+        
+        let marker = {}
+
+        L.control.layers(baseMaps, marker, { collapsed: true }).addTo(map);
+       
+        let geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false
+        }).on('markgeocode', function(e) {
+            let center = e.geocode.bbox.getCenter();
+            console.log(center);
+            map.flyTo(center);
+        }).addTo(map);
+
+        for (i = 0; i < cap_20.length; i++) {
+            console.log(cap_20[i][0], cap_20[i][1])
+            var myIcon = L.icon({
+            iconUrl: "{% static 'img/green_bin.jpg' %}",
+            iconSize: [25, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([cap_20[i][0], cap_20[i][1]], {icon: myIcon}).addTo(map);  
+        marker.bindPopup(`${marker.getLatLng()}`).openPopup() 
+        }
 
         for (i = 0; i < cap_20_70.length; i++) {
-            marker = new google.maps.Marker(
-                {
-                    position: new google.maps.LatLng(cap_20_70[i][0], cap_20_70[i][1]),
-                    map: map,
-                    icon: "{% static 'img/yellow_bin.jpg' %}",
-                    lat_id: cap_20_70[i][0],
-                    lon_id: cap_20_70[i][1],
-                });
-
-            google.maps.event.addListener(marker, 'click', function () {
-                var h1 = 0;
-                var h2 = 0;
-                var c2 = 0;
-                var marker = this;
-                var lati = this.lat_id.toString().replace('.', '-');
-                var longi = this.lon_id.toString().replace('.', '-');
-                var latlongi = lati.concat("|").concat(longi);
-                console.log(lati, longi, latlongi);
-                var ref = firebase.database().ref("RealTimeBinLevel/" + latlongi);
-                ref.once("value", function (snapshot) {
-                    h2 = snapshot.val().height;
-                    h2 = parseFloat(h2);
-                    h2 += 2;
-
-                    var ref2 = firebase.database().ref("Bin/" + latlongi);
-                    ref2.once("value", function (snapshot) {
-                        h1 = snapshot.val().height;
-                        c2 = snapshot.val().capcity;
-                        h1 = parseFloat(h1);
-                        c2 = parseFloat(c2);
-
-                        c2 += 38;
-                        var perc = h2 / h1 * 100;
-                        var d = new Date();
-                        var month = d.getMonth() + 1;
-                        month = ('0' + month).slice(-2);
-                        var datee = d.getFullYear() + "-" + month + "-" + d.getDate();
-                        var timee = (d.getHours() + ':' + d.getMinutes());
-                        console.log(h2, h1, c2);
-                        firebase.database().ref("BinPerLevel/" + latlongi + "/" + datee + "/" + timee + "/height").set(h2.toString());
-                        firebase.database().ref("Bin/" + latlongi).update({ capcity: c2.toString() });
-
-                        console.log(h1, h2, perc);
-                        if (20 < perc < 70) {
-                            marker.setIcon("{% static 'img/yellow_bin.jpg' %}");
-                        }
-                        if (perc <= 20) {
-                            marker.setIcon("{% static 'img/green_bin.jpg' %}");
-                        }
-                        if (perc >= 70) {
-                            marker.setIcon("{% static 'img/red_bin (2).jpg' %}");
-                        }
-                    });
-                });
-                infowindow.open(map);
-            });
-
+            console.log(cap_20_70[i][0], cap_20_70[i][1])
+            var myIcon = L.icon({
+            iconUrl: "{% static 'img/yellow_bin.jpg' %}",
+            iconSize: [25, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([cap_20_70[i][0], cap_20_70[i][1]], {icon: myIcon}).addTo(map); 
+        marker.bindPopup(`lat,lng: ${marker.getLatLng()}`).openPopup() 
         }
-    }
+
+        for (i = 0; i < cap_70.length; i++) {
+            console.log(cap_70[i][0], cap_70[i][1])
+            var myIcon = L.icon({
+            iconUrl: "{% static 'img/red_bin (2).jpg' %}",
+            iconSize: [25, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([cap_70[i][0], cap_70[i][1]], {icon: myIcon}).addTo(map);
+        marker.bindPopup(`lat,lng: ${marker.getLatLng()}`).openPopup() 
+        }
+
+        for (i = 0; i < dump.length; i++) {
+            var myIcon = L.icon({
+            iconUrl: "{% static 'img/dump_icon.jpg' %}",
+            iconSize: [25, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([dump[i][0], dump[i][1]], {icon: myIcon}).addTo(map);
+        marker.bindPopup(`lat,lng: ${marker.getLatLng()}`).openPopup() 
+        }
+
+        for (i = 0; i < depot.length; i++) {
+            var myIcon = L.icon({
+            iconUrl: "{% static 'img/depot_icon.jpg' %}",
+            iconSize: [25, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([depot[i][0], depot[i][1]], {icon: myIcon}).addTo(map);
+        marker.bindPopup(`lat,lng: ${marker.getLatLng()}`).openPopup() 
+        }
+
+    //     function initMap() {
+    //         var cap_20 = {{ cap_20| safe }};
+    //         var cap_20_70 = {{ cap_20_70| safe }};
+    //         var cap_70 = {{ cap_70| safe }};
+    //         console.log(cap_20, cap_20_70, cap_70)
+    //         var map = new google.maps.Map(document.getElementById('map'),
+    //         {
+    //             zoom: 14, center: new google.maps.LatLng(18.5680052, 73.9873692), mapTypeId: google.maps.MapTypeId.ROADMAP
+    //         });
+    //         var infowindow = new google.maps.InfoWindow();
+    //         var marker1, i, marker, marker2;
+    //         for (i = 0; i < cap_20.length; i++) {
+    //             console.log(cap_20[i][0], cap_20[i][1])
+    //             marker2 = new google.maps.Marker(
+    //             {
+    //                 position: new google.maps.LatLng(cap_20[i][0], cap_20[i][1]),
+    //                 map: map,
+    //                 icon: "{% static 'img/green_bin.jpg' %}"
+    //             });
+    //         }
+
+
+    //         for (i = 0; i < cap_70.length; i++) {
+    //             console.log(cap_70[i][0], cap_70[i][1])
+    //             marker1 = new google.maps.Marker(
+    //             {
+    //                 position: new google.maps.LatLng(cap_70[i][0], cap_70[i][1]),
+    //                 map: map,
+    //                 icon: "{% static 'img/red_bin (2).jpg' %}"
+    //             });
+    //         }
+
+    //     for (i = 0; i < cap_20_70.length; i++) {
+    //         marker = new google.maps.Marker(
+    //             {
+    //                 position: new google.maps.LatLng(cap_20_70[i][0], cap_20_70[i][1]),
+    //                 map: map,
+    //                 icon: "{% static 'img/yellow_bin.jpg' %}",
+    //                 lat_id: cap_20_70[i][0],
+    //                 lon_id: cap_20_70[i][1],
+    //             });
+    //     }
+    // }
 
     </script>
-
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAV8cR59avIsW7qzMiD5udMKtnOz521lRM&callback=initMap">
-        </script>
 </body>
 
 </html>

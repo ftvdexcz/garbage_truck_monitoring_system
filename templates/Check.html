@@ -1,36 +1,151 @@
+{% load static %}
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Title</title>
-<style>
-        div{
-        position : absolute;
-        right : 10px;
-        top : 5px
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Dữ liệu xe rác</title>
+
+    <style>
+        
+        html,
+        body {
+            /* height: 100%; */
+            
+        }
+
+        body {
+            margin: 0;
+            /* background: linear-gradient(45deg, #49a09d, #5f2c82); */
+            font-family: sans-serif;
+            font-weight: 100;
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        table {
+            width: 800px;
+            border-collapse: collapse;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #333;
+        }
+
+        th {
+            text-align: left;
+        }
+
+        thead th {
+            /* background-color: #55608f; */
+            background-color: rgb(192, 23, 24);
+            color: #fff;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        tbody td {
+            position: relative;
+        }
+
+        tbody td:hover:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -9999px;
+            bottom: -9999px;
+            background-color: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+        }
+
+        .header {
+            margin: 18.5px auto;
+            display: flex;
+            align-items: center;
+            max-width: 920px;
+            gap: 200px;
+
+        }
+
+        section {
+            border-bottom: 1px solid red;
+        }
+
+        @media (max-width: 920px) {
+            .header {
+                gap: 50px;
+            }
+        }
+
+        @media (max-width: 740px) {
+            .header img {
+                width: 150px;
+                height: 100px;
+            }
+
+            .header {
+                gap: 0px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
-<body>
-<div>
-<button type="button" onclick="location.href='{% url 'log' %}'">Logout</button>
-</div>
-<h2>Driver</h2>
 
-<br><br>
-{% for name,address,age,gender,date in comb_lis %}
+<body style="">
+    <section>
+        <header class="header">
+            <img src="https://portal.ptit.edu.vn/wp-content/uploads/2016/04/ptit-logo.png" alt="">
+            <div>
+                <p style="color:#000000;font-size:18px">HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+                <p style="color:#D30000;font-size:18px">Posts and Telecommunications Institute of Technology</p>
+            </div>
+        </header>
+    </section>
 
-<h4>Name: {{name}}  &nbsp; Age: {{age}} &nbsp; Gender:{{gender}} &nbsp; Address: {{address}} &nbsp; Joining Date: {{date}}</h4>
-<br>
 
-{% endfor %}
+    <div class="container">
+        <h1 style="color:#333">Dữ liệu xe rác</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã xe</th>
+                    <th>Sức chứa</th>
+                    <th>Ảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id,cap in comb_lis %}
 
-<h2>Bin</h2>
-<br><br>
-{% for latitude,longitude,capacity in comb_lis_bin %}
-<h4>Latitude:{{latitude}} &nbsp;Longitude: {{longitude}}&nbsp;Capacity:{{capacity}}</h4>
-<br>
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{cap}}</td>
+                    <td><a class="nav-link" href='/garbage_image/{{id}}/'>Xem chi tiết</a></td>
+                </tr>
+                {% endfor %}
 
-{% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 </body>
+
+<script>
+    console.log('{{e}}')
+</script>
+
 </html>

@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="{% static 'css/slick.css' %}" />
   <!-- style CSS -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  <title>Kartavya</title>
+  <title>Thêm thùng rác</title>
   <script src="{% static 'js/jquery-1.12.1.min.js'%}"></script>
   <!-- popper js -->
   <script src="{% static 'js/popper.min.js'%}"></script>
@@ -35,138 +35,217 @@
   <script src="{% static 'js/jquery.nice-select.min.js'%}"></script>
   <!-- custom js -->
   <script src="{% static 'js/custom.js' %}"></script>
-  <title>Sign</title>
   <style>
     .logout {
       position: absolute;
       right: 10px;
       top: 5px
     }
+
+    .header{
+      margin: 18.5px auto;
+      display: flex;
+      align-items: center;
+      max-width: 1259px;
+      gap: 200px;
+    }
+
+    @media (max-width: 920px) {
+      .header{
+        gap: 50px;
+      }
+    }
+
+    @media (max-width: 740px){
+      .header img{
+        width: 150px;
+        height: 100px;
+      }
+      .header{
+        gap: 0px;
+        font-size: 12px;
+      }
+    }
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAV8cR59avIsW7qzMiD5udMKtnOz521lRM">
-  </script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
+  integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
+  integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 </head>
 
 <body onload="initialize()">
-  <header class="main_menu home_menu">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-12">
-          <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" style="color: WHITE !important;" href="http://127.0.0.1:8000/">
-              {# <img src="{% static 'img/logo.png'%}" alt="logo" />#}
-              Kartavya
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="ti-menu"></span>
-            </button>
+  <header class="header">
+    <img  src="https://portal.ptit.edu.vn/wp-content/uploads/2016/04/ptit-logo.png" alt="">
+    <div>
+      <p style="color:#000000;font-size:18px">HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+      <p style="color:#D30000;font-size:18px">Posts and Telecommunications Institute of Technology</p>
+    </div>
+    
+  </header>
 
-            <div class="collapse navbar-collapse main-menu-item justify-content-center" id="navbarSupportedContent">
-              <ul class="navbar-nav align-items-center">
-                <li class="nav-item">
-                  <a class="nav-link" href="http://127.0.0.1:8000">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'routes' %}">Generate Routes</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'real_time' %}">Real Time Monitoring</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'latlong' %}">Status of Bins</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Add A Resource
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'create_driver' %}">Add Driver</a>
-                    <a class="dropdown-item" href="{% url 'create_bin' %}">Add Bin</a>
-                    <a class="dropdown-item" href="{% url 'create_depot' %}">Add Depot</a>
-                    <a class="dropdown-item" href="{% url 'create_dump' %}">Add Dumping Ground</a>
-                    <a class="dropdown-item" href="{% url 'vehicles' %}">Add Vehicle</a>
-                  </div>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'check' %}">View Data</a>
-                </li>
-              </ul>
-            </div>
-
-          </nav>
+  
+  <section class="banner_part">
+    <header class="main_menu home_menu">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg navbar-light">
+              <a class="navbar-brand" style="color: WHITE !important;" href="http://127.0.0.1:8000/">
+                {# <img src="{% static 'img/logo.png'%}" alt="logo" />#}
+                Trang chủ
+              </a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="ti-menu"></span>
+              </button>
+  
+              <div class="collapse navbar-collapse main-menu-item justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav align-items-center">
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" href="http://127.0.0.1:8000">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'routes' %}">Generate Routes</a>
+                  </li> -->
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'real_time' %}">Bản đồ xe</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'latlong' %}">Bản đồ thùng rác</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      Thêm tài nguyên
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'create_driver' %}">Thêm lái xe</a>
+                      <a class="dropdown-item" href="{% url 'create_bin' %}">Thêm thùng rác</a>
+                      <a class="dropdown-item" href="{% url 'create_depot' %}">Thêm kho</a>
+                      <a class="dropdown-item" href="{% url 'create_dump' %}">Thêm bãi đổ</a>
+                      <a class="dropdown-item" href="{% url 'vehicles' %}">Thêm xe rác</a>
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'check' %}">Xem dữ liệu</a>
+                  </li>
+                </ul>
+              </div>
+  
+            </nav>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
-  <section class="banner_part">
+    </header>
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-lg-6 offset-lg-1" style="position: relative;top: 80px">
-          <H2 style="color:WHITE!important;">Add Bin</H2>
-          <div id="map" style="width: 480px; height: 480px">
-
+        <div class="col-lg-6 offset-lg-1" style="position: relative;top: 80px; margin-left: 0">
+          <H2 style="color:WHITE!important;">Thêm thùng rác</H2>
+          <div class="wrap">
+            <div id="map" style="width: 600px; height: 480px">
+            </div>
+            <div class="wrap-right">
+              <div>
+                <input id="address" type="text" value="21.018915, 105.839723">
+                <!-- <input type="button" value="Encode" onclick="codeAddress()"> -->
+              </div>
+              <form action="/post_create_bin/" method="post">
+                {% csrf_token %}
+                {# Latitude :#}
+                {# <input type="text" name="lat" required><br><br>#}
+                {# Longitude:#}
+                {# <input type="text" name="lon" required><br><br>#}
+                <input type="hidden" id="latitude" name='lat' value="21.018915">
+                <input type="hidden" id="longitude" name='lon' value="105.839723">
+                <h5 style="color: WHITE!important;">Sức chứa:</h5>
+                <input type="text" name="capacity" required><br>
+                <h5 style="color: WHITE!important;">Chiều cao:</h5>
+                <input type="text" name="height" required><br><br>
+                <input type="submit" value="Thêm">
+              </form>
+            </div>
+            
           </div>
-          <div>
-            <input id="address" type="textbox" value="Aurangabad,India">
-            <input type="button" value="Encode" onclick="codeAddress()">
-          </div>
-          <form action="/post_create_bin/" method="post">
-            {% csrf_token %}
-            {# Latitude :#}
-            {# <input type="text" name="lat" required><br><br>#}
-            {# Longitude:#}
-            {# <input type="text" name="lon" required><br><br>#}
-            <input type="hidden" id="latitude" name='lat' value="1">
-            <input type="hidden" id="longitude" name='lon' value="1">
-            <h5 style="color: WHITE!important;">Capacity:</h5>
-            <input type="text" name="capacity" required><br>
-            <h5 style="color: WHITE!important;">Height:</h5>
-            <input type="text" name="height" required><br><br>
-            <input type="submit" value="Submit">
-          </form>
+          
         </div>
       </div>
     </div>
   </section>
 </body>
 <script>
-  var geocoder;
-  var map;
-  var latitude;
-  var longitude;
   function initialize() {
-    geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(19.8762, 75.3433);
-    var mapOptions = {
-      zoom: 8,
-      center: latlng
-    }
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-  }
+  let map = L.map('map').setView([21.018915, 105.839723], 13);
 
-  function codeAddress() {
-    var address = document.getElementById('address').value;
-    geocoder.geocode({ 'address': address }, function (results, status) {
-      if (status == 'OK') {
-        map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
+  let osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+  osm.addTo(map)
+
+  googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+  });
+
+  let baseMaps = {
+    "OSM": osm,
+    "Google Street": googleStreets
+  }
+  
+  let marker = {}
+
+  L.control.layers(baseMaps, marker, {collapsed: true}).addTo(map);
+
+  let geocoder = L.Control.geocoder({
+    defaultMarkGeocode: false
+  })
+  .on('markgeocode', function(e) {
+    let center = e.geocode.bbox.getCenter();
+    console.log(center);
+    map.flyTo(center);
+    lat = center.lat;
+    lon = center.lng;
+    if (marker != undefined) {
+              map.removeLayer(marker);
+        };
+        var myIcon = L.icon({
+            iconUrl: "{% static 'img/green_bin.jpg' %}",
+            iconSize: [15, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
         });
-        console.log(results[0].geometry.location.lat());
-        latitude = results[0].geometry.location.lat();
-        longitude = results[0].geometry.location.lng();
-        console.log(results[0].geometry.location.lng());
-        document.getElementById('latitude').value = latitude.toString();
-        document.getElementById('longitude').value = longitude.toString();
+        marker = L.marker([lat,lon], {icon: myIcon}).addTo(map);  
+    document.getElementById('address').value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lon;
+  })
+  .addTo(map);
 
-      } else {
-        alert('Geocode was not successful for the following reason: ' + status);
-      }
+  map.on('click', function(e) {        
+        lat = e.latlng.lat;
+        lon = e.latlng.lng;
+        if (marker != undefined) {
+              map.removeLayer(marker);
+        };
+        var myIcon = L.icon({
+            iconUrl: "{% static 'img/green_bin.jpg' %}",
+            iconSize: [15, 25],
+            // iconAnchor: [22, 94],
+            // popupAnchor: [-3, -76],
+            // shadowSize: [68, 95],
+            // shadowAnchor: [22, 94]
+        });
+        marker = L.marker([lat,lon], {icon: myIcon}).addTo(map);  
+        document.getElementById('address').value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lon;
     });
-  }
+}
+
 </script>
 
 </html>

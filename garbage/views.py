@@ -18,19 +18,19 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 
 
-config = {
-    'apiKey': "AIzaSyBK48OX_OfiqvtVR1vs-FURzbFOaRGptGQ",
-    'authDomain': "garbage-truck-8fab7.firebaseapp.com",
-    'projectId': "garbage-truck-8fab7",
-    'storageBucket': "garbage-truck-8fab7.appspot.com",
-    'messagingSenderId': "592064246935",
-    'databaseURL': "https://garbage-truck-8fab7-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    'appId': "1:592064246935:web:1bfe3cac36a0d04b7f25d2",
-    'measurementId': "G-X55PH5YCK1" 
-}
-firebase = pyrebase.initialize_app(config)
+# config = {
+#     'apiKey': "AIzaSyBK48OX_OfiqvtVR1vs-FURzbFOaRGptGQ",
+#     'authDomain': "garbage-truck-8fab7.firebaseapp.com",
+#     'projectId': "garbage-truck-8fab7",
+#     'storageBucket': "garbage-truck-8fab7.appspot.com",
+#     'messagingSenderId': "592064246935",
+#     'databaseURL': "https://garbage-truck-8fab7-default-rtdb.asia-southeast1.firebasedatabase.app/",
+#     'appId': "1:592064246935:web:1bfe3cac36a0d04b7f25d2",
+#     'measurementId': "G-X55PH5YCK1" 
+# }
+# firebase = pyrebase.initialize_app(config)
 
-database=firebase.database()
+# database=firebase.database()
 
 # vehicle = database.child('Vehicle').child('test123').child('capacity').get().val()
 # print(vehicle)
@@ -38,7 +38,7 @@ database=firebase.database()
 myclient = pymongo.MongoClient(f"mongodb+srv://Long:VSNxxEAPgD3n6Whh@cluster0.mb6jkya.mongodb.net/?retryWrites=true&w=majority&authSource=admin")
 db = myclient.get_database('garbage_truck_admin')
 
-# print(db)
+print(db)
 
 def signIn(request):
 	return render(request, "sign.html")
@@ -61,6 +61,7 @@ def logout(request):
     auth.logout(request)
     return render(request,'sign.html')
 
+'''
 def get_latlong(request):
     config = {
         'apiKey': "AIzaSyBK48OX_OfiqvtVR1vs-FURzbFOaRGptGQ",
@@ -108,14 +109,32 @@ def get_latlong(request):
 
     # return render(request, 'neww.html',{"cap_70":cap_70,"cap_20_70":cap_20_70,"cap_20":cap_20})
     return render(request, 'latlong.html', {"cap_70": cap_70, "cap_20_70": cap_20_70, "cap_20": cap_20})
+'''
 
 def get_latlong2(request) :
     bins = db.bins.find({})
+    depots = db.depots.find({})
+    dumps = db.dumping_ground.find({})
     cap_70, cap_20, cap_20_70 = [], [], []
+
+    dump_json = []
+    depot_json = []
+
+    for i in depots: 
+        lati = float(i['location']['coordinates'][0])
+        long = float(i['location']['coordinates'][1])
+        depot_json.append([lati, long])
+
+    for i in dumps: 
+        lati = float(i['location']['coordinates'][0])
+        long = float(i['location']['coordinates'][1])
+        dump_json.append([lati, long])
+
     for bin in bins:
+        # print(bin)
         height = int(bin['height'])
-        lati = float(bin['latitude'])
-        long = float(bin['longitude'])
+        lati = float(bin['location']['coordinates'][0])
+        long = float(bin['location']['coordinates'][1])
         
         try:
             data = db.bin_per_level.find_one({'bin_id': bin['id'], 'date': str(date.today())}, sort=[( '_id', pymongo.DESCENDING )]) # get the lastest inserted document
@@ -136,11 +155,13 @@ def get_latlong2(request) :
     cap_20 = json.dumps(cap_20)
     cap_20_70 = json.dumps(cap_20_70)
     cap_70 = json.dumps(cap_70)
+    dump_json = json.dumps(dump_json)
+    depot_json = json.dumps(depot_json)
     print(cap_70)
     print(cap_20_70)
     print(cap_20)
 
-    return render(request, 'marker.html', {"cap_70": cap_70, "cap_20_70": cap_20_70, "cap_20": cap_20})
+    return render(request, 'marker.html', {"cap_70": cap_70, "cap_20_70": cap_20_70, "cap_20": cap_20, "dump": dump_json, "depot": depot_json})
 
 def create_bin(request):
     return render(request,'CreateBin.html')
@@ -164,8 +185,10 @@ def post_create_bin(request):
 
     data = {
         "id": id,
-        "latitude":lat,
-        'longitude':lon,
+        "location": {
+            'type': 'Point',
+            'coordinates': [lat, lon]
+        },
 		'capacity':capacity,
         'height' :height
     }
@@ -175,7 +198,7 @@ def post_create_bin(request):
     # print(bins)
     # name = "vinal"
     result = db.bins.update_one({'id': id}, {'$set': data}, upsert=True)
-    return render(request,'welcome.html')
+    return render(request, "sign.html")
 
 def create_depot(request):
     return render(request,'CreateDepot.html')
@@ -197,14 +220,17 @@ def post_create_depot(request):
 
     data = {
         'id': id,
-        "latitude":lat,
-        'longitude':lon,
+        "location": {
+            'type': 'Point',
+            'coordinates': [lat, lon]
+        },
+
     }
     # database.child('Depot').child(id).set(data)
     # name = database.child('users').child(id).child('details').child('name').get().val()
     # name = "vinal"
     result = db.depots.update_one({'id': id}, {'$set': data}, upsert=True)
-    return render(request,'welcome.html')
+    return render(request, "sign.html")
 
 def create_vehicle(request):
     return render(request, 'CreateVehicle.html')
@@ -231,7 +257,7 @@ def post_create_vehicle(request):
         result = db.vehicles.update_one({'vehicle_no': vehicle_no}, {'$set': data}, upsert=True)
         name = "vinal"
         #return render(request, 'welcome.html', {'e': name})
-    return render(request, 'welcome.html')
+    return render(request, "sign.html")
 
 def create_driver(request):
 	return render(request, 'CreateDriver.html')
@@ -263,38 +289,19 @@ def post_create_driver(request):
 
     # upsert=True: insert if not existed
     result = db.drivers.update_one({'mobileNo': mobileNo}, {'$set': data}, upsert=True)
-    return render(request,'welcome.html', {'e':name})
+    return render(request, "sign.html")
 
 def check(request):
-    # --------------------------Driver
-    drivers = db.drivers.find({})
-    name=[]
-    address=[]
-    age=[]
-    gender=[]
-    date=[]
-    for driver in drivers:
-        name.append(driver['name'])
-        address.append(driver['address'])
-        age.append(driver['age'])
-        gender.append(driver['gender'])
-        date.append(driver['joining_date'])
-    comb_lis = zip(name,address,age,gender,date)
+    vehicles = db.vehicles.find({})
+    id = []
+    cap = []
+    for vehicle in vehicles:
+        id.append(vehicle['vehicle_no'])
+        cap.append(vehicle['capacity'])
+       
+    comb_lis = zip(id, cap)
 
-	# -------------------------Bin
-    bins = db.bins.find({})
-    latitude = []
-    longitude = []
-    capacity = []
-
-    for bin in bins:
-        latitude.append(bin['latitude'])
-        longitude.append(bin['longitude'])
-        capacity.append(bin['capacity'])
-
-    comb_lis_bin = zip(latitude,longitude,capacity)
-
-    return render(request,'check.html',{'comb_lis':comb_lis,'comb_lis_bin':comb_lis_bin,'e':"Palak"})
+    return render(request,'check.html',{'comb_lis':comb_lis})
 
 def check_queries(request):
     citizendetails = db.citizens.find({})
@@ -670,14 +677,20 @@ def post_create_dump(request):
 
     data = {
         'id': id,
-        "latitude":lat,
-        'longitude':lon,
+        "location": {
+            'type': 'Point',
+            'coordinates': [lat, lon]
+        },
     }
     # database.child('DumpG').child(id).set(data)
     # name = database.child('users').child(id).child('details').child('name').get().val()
     
     result = db.dumping_ground.update_one({'id': id}, {'$set': data}, upsert=True)
-    return render(request,'welcome.html')
+    return render(request, "sign.html")
+
+def garbage_image(request, vId):
+    print(vId)
+    return render(request,'garbageImage.html')
 
 ########test######
 def get_vehicle_capacities_test():
@@ -921,3 +934,21 @@ def generate_routes_test(request):
     for i in vehicles:
         vehicleId.append(int(i))
     return render(request,'generatedRoutes_copy.html',{'route':test,'veh1': datap['vehicle_key'][0],'vehicleId':vehicleId})
+
+def bin_per_level_gen_test(request):
+    bins = db.bins.find({})
+    tmp = [0.15, 0.35, 0.88]
+    import random
+    for bin in bins:
+        height = int(bin['height'])
+        id = bin['id']
+        
+        print(id, height)
+        data = {
+            'bin_id': id,
+            'date': str(date.today()),
+            'height': tmp[random.randint(0, 2)]*height
+        }
+        db.bin_per_level.update_one({'bin_id': id}, {'$set': data}, upsert=True)
+
+    return render(request,'sign.html', {'e': 'success'})

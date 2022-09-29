@@ -42,5 +42,7 @@ urlpatterns = [
 
     url(r'^createdump/',views.create_dump,name='create_dump'),
     url(r'^post_create_dump/',views.post_create_dump,name='post_create_dump'),
+    url(r'^post_bin_test/', views.bin_per_level_gen_test,name='bin_test'),
+    path(r'garbage_image/<str:vId>/', views.garbage_image),
 
 ];

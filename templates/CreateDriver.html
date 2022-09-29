@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Create Driver</title>
+  <title>Thêm lái xe</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <link rel="stylesheet" href="{% static  'css/bootstrap.min.css'%}" />
@@ -40,67 +40,100 @@
     h5 {
       color: WHITE !important;
     }
+
+    .header{
+      margin: 18.5px auto;
+      display: flex;
+      align-items: center;
+      max-width: 1259px;
+      gap: 200px;
+    }
+
+    @media (max-width: 920px) {
+      .header{
+        gap: 50px;
+      }
+    }
+
+    @media (max-width: 740px){
+      .header img{
+        width: 150px;
+        height: 100px;
+      }
+      .header{
+        gap: 0px;
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <header class="main_menu home_menu">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-12">
-          <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" style="color: WHITE !important;" href="http://127.0.0.1:8000/">
-              {# <img src="{% static 'img/logo.png'%}" alt="logo" />#}
-              Trang chủ
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="ti-menu"></span>
-            </button>
-
-            <div class="collapse navbar-collapse main-menu-item justify-content-center" id="navbarSupportedContent">
-              <ul class="navbar-nav align-items-center">
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="http://127.0.0.1:8000">Home</a>
-                </li> -->
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="{% url 'routes' %}">Generate Routes</a>
-                </li> -->
-                <li class="nav-item">
-                  <a class="nav-link" href='{% url 'real_time' %}'>Bản đồ xe</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href='{% url 'latlong' %}'>Bản đồ thùng rác</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Thêm tài nguyên
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    
-                    <a class="dropdown-item" href='{% url 'create_driver' %}'>Thêm lái xe</a>
-                    <a class="dropdown-item" href='{% url 'create_bin' %}'>Thêm thùng rác</a>
-                    <a class="dropdown-item" href='{% url 'create_depot' %}'>Thêm kho</a>
-                    <a class="dropdown-item" href='{% url 'create_dump' %}'>Thêm bãi đổ</a>
-                    <a class="dropdown-item" href='{% url 'vehicles' %}'>Thêm xe rác</a>
-                  </div>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href='{% url 'check' %}'>Xem dữ liệu</a>
-                </li>
-              </ul>
-            </div>
-
-          </nav>
-        </div>
-      </div>
+  <header class="header">
+    <img  src="https://portal.ptit.edu.vn/wp-content/uploads/2016/04/ptit-logo.png" alt="">
+    <div>
+      <p style="color:#000000;font-size:18px">HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+      <p style="color:#D30000;font-size:18px">Posts and Telecommunications Institute of Technology</p>
     </div>
+    
   </header>
   <section class="banner_part">
+    <header class="main_menu home_menu">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-12">
+            <nav class="navbar navbar-expand-lg navbar-light">
+              <a class="navbar-brand" style="color: WHITE !important;" href="http://127.0.0.1:8000/">
+                {# <img src="{% static 'img/logo.png'%}" alt="logo" />#}
+                Trang chủ
+              </a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="ti-menu"></span>
+              </button>
+  
+              <div class="collapse navbar-collapse main-menu-item justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav align-items-center">
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" href="http://127.0.0.1:8000">Home</a>
+                  </li> -->
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" href="{% url 'routes' %}">Generate Routes</a>
+                  </li> -->
+                  <li class="nav-item">
+                    <a class="nav-link" href='{% url 'real_time' %}'>Bản đồ xe</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href='{% url 'latlong' %}'>Bản đồ thùng rác</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      Thêm tài nguyên
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      
+                      <a class="dropdown-item" href='{% url 'create_driver' %}'>Thêm lái xe</a>
+                      <a class="dropdown-item" href='{% url 'create_bin' %}'>Thêm thùng rác</a>
+                      <a class="dropdown-item" href='{% url 'create_depot' %}'>Thêm kho</a>
+                      <a class="dropdown-item" href='{% url 'create_dump' %}'>Thêm bãi đổ</a>
+                      <a class="dropdown-item" href='{% url 'vehicles' %}'>Thêm xe rác</a>
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href='{% url 'check' %}'>Xem dữ liệu</a>
+                  </li>
+                </ul>
+              </div>
+  
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-lg-6 offset-lg-1" style="position: relative;top: 90px">
+        <div class="col-lg-6 offset-lg-1" style="position: relative;top: 80px; margin-left: 0;">
           <H2 style="color:WHITE !important;">Thêm lái xe</H2>
           <form action="/post_create_driver/" method="post">
             {% csrf_token %}
