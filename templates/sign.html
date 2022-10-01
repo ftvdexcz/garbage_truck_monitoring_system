@@ -65,6 +65,10 @@
         font-size: 12px;
       }
     }
+
+    .map--bin:focus{
+      color: #fff !important;
+    }
   </style>
 </head>
 
@@ -105,7 +109,7 @@
                     <a class="nav-link" href='{% url 'real_time' %}'>Bản đồ xe</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href='{% url 'latlong' %}'>Bản đồ thùng rác</a>
+                    <a class="nav-link map--bin" href='#'>Bản đồ thùng rác</a>        
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -165,6 +169,11 @@
 
 <script>
   console.log('{{e}}')
+
+  document.querySelector('.map--bin').addEventListener('click', function(e){
+    e.preventDefault();
+    window.open('{% url 'latlong' %}');
+  })
 </script>
 
 </html>

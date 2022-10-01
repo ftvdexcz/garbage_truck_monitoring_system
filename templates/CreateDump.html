@@ -65,6 +65,10 @@
         font-size: 12px;
       }
     }
+
+    .map--bin:focus{
+      color: #fff !important;
+    }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
   integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
@@ -112,7 +116,7 @@
                     <a class="nav-link" href='{% url 'real_time' %}'>Bản đồ xe</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href='{% url 'latlong' %}'>Bản đồ thùng rác</a>
+                    <a class="nav-link map--bin" href="#">Bản đồ thùng rác</a>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -156,6 +160,11 @@
 
 </body>
 <script>
+  document.querySelector('.map--bin').addEventListener('click', function(e){
+    e.preventDefault();
+    window.open('{% url 'latlong' %}');
+  })
+
   function initialize() {
   let map = L.map('map').setView([21.018915, 105.839723], 13);
 
