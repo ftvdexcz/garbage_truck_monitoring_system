@@ -39,10 +39,11 @@ urlpatterns = [
     url(r'^latlong/',views.get_latlong2,name = "latlong"),
     path('updateFeedback/', views.updateFeedback, name="updateFeedback"),
     path('g-routes/<int:vId>/', views.g_routes),
-
     url(r'^createdump/',views.create_dump,name='create_dump'),
     url(r'^post_create_dump/',views.post_create_dump,name='post_create_dump'),
     url(r'^post_bin_test/', views.bin_per_level_gen_test,name='bin_test'),
+    # url(r'^video/', views.bin_per_level_gen_test,name='bin_test'),
     path(r'garbage_image/<str:vId>/', views.garbage_image),
-
+    url(r'^video_feed/(?P<id>\d+)/$', views.video_feed, name='video_feed'),
+    path('videos/', views.get_video_streams)
 ];

@@ -6,6 +6,7 @@ import os
 import pymongo
 from django.shortcuts import render
 from django.contrib import auth
+from django.http import HttpResponse, StreamingHttpResponse
 import requests
 import json
 import urllib.request
@@ -16,6 +17,7 @@ from datetime import datetime
 import pyrebase
 import json
 from django.views.decorators.csrf import csrf_exempt
+import cv2 
 
 
 # config = {
@@ -60,6 +62,39 @@ def postsign(request):
 def logout(request):
     auth.logout(request)
     return render(request,'sign.html')
+
+cameras = [
+           "rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp",
+           "rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp",
+           "rtsp://tinh:123456@192.168.0.103:8080/h264_pcm.sdp",
+           "rtsp://huy:123456@192.168.0.100:8080/h264_pcm.sdp",
+           ]
+
+def find_cam_by_id(camera_id):
+    return cameras[int(camera_id)]
+
+def get_video_streams(request):
+    return render(request,'videoStream.html')
+
+def stream(camera_id):
+    cap = cv2.VideoCapture(find_cam_by_id(camera_id))
+    count = 0
+    while True:
+        ret, frame = cap.read()
+
+        if not ret:
+            print("Error: failed to capture image")
+            count += 1
+            if count == 5:
+                break
+            continue
+
+        frame = cv2.imencode('.jpg', frame)[1].tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def video_feed(request, id):
+    return StreamingHttpResponse(stream(id), content_type='multipart/x-mixed-replace; boundary=frame')
 
 '''
 def get_latlong(request):

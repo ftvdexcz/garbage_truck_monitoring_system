@@ -10,7 +10,6 @@ Garbage Truck Monitoring System is a role based system having three roles admin,
 
 ![Alt text](screenshots/dashboard.jpeg?raw=true "Dashboard")
 
-
 The new bin location can be added by just clicking on the map or writing the address of the actual location. Its capacity and height needs to be entered as those parameters will be used to calculate real time garbage level of the bin.  
 
 ![Alt text](screenshots/addBin.jpeg?raw=true "Add a bin")
