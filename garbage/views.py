@@ -17,6 +17,7 @@ from datetime import datetime
 import pyrebase
 import json
 from django.views.decorators.csrf import csrf_exempt
+
 import cv2 
 
 
@@ -39,6 +40,15 @@ import cv2
 
 myclient = pymongo.MongoClient(f"mongodb+srv://Long:VSNxxEAPgD3n6Whh@cluster0.mb6jkya.mongodb.net/?retryWrites=true&w=majority&authSource=admin")
 db = myclient.get_database('garbage_truck_admin')
+
+cameras = {
+    1: 'rtsp://long:1mrbean3@192.168.1.81:554',
+    2: 'rtsp://long:1mrbean3@192.168.1.81:554',
+    3: 'rtsp://long:1mrbean3@192.168.1.81:554',
+    4: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
+    5: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
+    6: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
+}
 
 print(db)
 
@@ -63,38 +73,46 @@ def logout(request):
     auth.logout(request)
     return render(request,'sign.html')
 
-cameras = [
-           "rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp",
-           "rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp",
-           "rtsp://tinh:123456@192.168.0.103:8080/h264_pcm.sdp",
-           "rtsp://huy:123456@192.168.0.100:8080/h264_pcm.sdp",
-           ]
+def get_camera_url(camera_id):
+    return cameras[camera_id]
 
-def find_cam_by_id(camera_id):
-    return cameras[int(camera_id)]
 
 def get_video_streams(request):
-    return render(request,'videoStream.html')
+    return render(request,'videoStream.html', {'num_cameras': range(1, 1 + len(cameras))})
 
-def stream(camera_id):
-    cap = cv2.VideoCapture(find_cam_by_id(camera_id))
-    count = 0
+def get_frame(url):
+    # Use cv2.VideoCapture to capture the video from the RTSP IP camera
+    cap = cv2.VideoCapture(url)
+
     while True:
-        ret, frame = cap.read()
+        try:
+            # Capture the video frame by frame
+            ret, frame = cap.read()
 
-        if not ret:
-            print("Error: failed to capture image")
-            count += 1
-            if count == 5:
-                break
-            continue
+            # If the connection to the camera is not active, try to re-establish the connection
+            if not cap.isOpened():
+                cap.open(url)
 
-        frame = cv2.imencode('.jpg', frame)[1].tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            if frame is None:
+                pass
+            else:
+                # Encode the frame to JPEG format
+                ret, jpeg = cv2.imencode('.jpg', frame)
+
+                # Return the frame as a response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        except Exception as e:
+            print(e)
+            # Close the video capture object
+            cap.release()
+            # Try to re-establish the connection to the camera
+            cap = cv2.VideoCapture(url)
 
 def video_feed(request, id):
-    return StreamingHttpResponse(stream(id), content_type='multipart/x-mixed-replace; boundary=frame')
+    url = get_camera_url(int(id))
+
+    return StreamingHttpResponse(get_frame(url), content_type='multipart/x-mixed-replace; boundary=frame')
 
 '''
 def get_latlong(request):

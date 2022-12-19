@@ -1,9 +1,48 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Video Streaming Demonstration</title>
-  </head>
-  <body>
-    <h1>Video Streaming Demonstration</h1>
-    <img src="{{ url_for('video_feed') }}">
-  </body>
+
+<head>
+  <title>IP Camera Stream</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div style="display:flex; height: 30vh">
+    <img src="/video_feed/1" alt="Camera 1" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/2" alt="Camera 2" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/3" alt="Camera 3" style="width: 33.33%; display: block">
+  </div> -->
+  <div style="display:flex; height: 30vh">
+    <img src="/video_feed/1" alt="Camera 1" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/4" alt="Camera 2" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/4" alt="Camera 3" style="width: 33.33%; display: block">
+  </div>
+  <div style="display:flex; height: 30vh">
+    <img src="/video_feed/4" alt="Camera 1" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/5" alt="Camera 2" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/6" alt="Camera 3" style="width: 33.33%; display: block">
+  </div>
+  <div style="display:flex; height: 30vh">
+    <img src="/video_feed/7" alt="Camera 1" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/4" alt="Camera 2" style="width: 33.33%; display: block">
+
+    <img src="/video_feed/1" alt="Camera 2" style="width: 33.33%; display: block">
+
+  </div>
+
+</body>
+
 </html>

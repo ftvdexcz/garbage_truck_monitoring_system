@@ -1,15 +1,157 @@
-<body>
-  <div class="container">
-      <div class="row">
-          <div class="col-lg-8  offset-lg-2">
-              <h3 class="mt-5">Quản lý video</h3>
-              <img src="{% url 'video_feed' id=0 %}" width="25%">
-              <img src="{% url 'video_feed' id=1 %}" width="25%">
-              <img src="{% url 'video_feed' id=3 %}" width="25%">
-              <img src="{% url 'video_feed' id=4 %}" width="25%">
-              
-          </div>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <title>Camera</title>
+
+  <style>
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    .grid {
+      max-width: 1260px;
+      margin: 0 auto;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+    }
+
+    .grid-item {
+      min-width: 420;
+      max-width: 420;
+      -webkit-box-flex: 1;
+      -ms-flex: 1 1 420px;
+      flex: 1 1 420px;
+      padding-left: .5rem;
+      padding-right: .5rem;
+      margin-bottom: 1rem;
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      padding: 2rem 0;
+      background: #40424a;
+      color: #e4e4e8;
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+    }
+
+    .wrapper h2 {
+      font-size: 2.125em;
+      line-height: 1.5;
+      clear: both;
+      margin-bottom: 0;
+      padding-top: 2em;
+      margin-top: 0;
+    }
+
+    .wrapper p {
+      font-size: 1em;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      color: #c4c4c8;
+      margin-top: 0;
+    }
+
+    .grid-item figure {
+      padding: 0;
+      margin: 0;
+      box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.05);
+    }
+
+    .grid-item figure img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .grid-item figcaption {
+      display: block;
+      padding: .625rem .5rem;
+      background: #474952;
+    }
+
+
+    .header {
+      margin: 18.5px auto;
+      display: flex;
+      align-items: center;
+      max-width: 920px;
+      gap: 200px;
+
+    }
+
+
+
+    @media (max-width: 920px) {
+      .header {
+        gap: 50px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      .header img {
+        width: 150px;
+        height: 100px;
+      }
+
+      .header {
+        gap: 0px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body style="">
+  <section style="border-bottom: 1px solid red; margin-bottom: 96px;">
+    <header class="header">
+      <img src="https://portal.ptit.edu.vn/wp-content/uploads/2016/04/ptit-logo.png" alt="">
+      <div>
+        <p style="color:#000000;font-size:18px">HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG</p>
+        <p style="color:#D30000;font-size:18px">Posts and Telecommunications Institute of Technology</p>
       </div>
-  </div>
-  </body>
-  
+    </header>
+  </section>
+
+
+
+  <section>
+    <div class="rt-container">
+      <div class="col-rt-12">
+        <div class="grid">
+          {% for i in num_cameras %}
+          
+          <div class="grid-item">
+            <figure>
+              <img src="{% url 'video_feed' i %}" alt="Camera {{ i }}">
+              <figcaption>Camera {{ i }}</figcaption>
+            </figure>
+          </div>
+          {% endfor %}
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+
+<script>
+  console.log('{{e}}')
+</script>
+
+</html>
