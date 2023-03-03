@@ -6,7 +6,7 @@ import os
 import pymongo
 from django.shortcuts import render
 from django.contrib import auth
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import HttpResponse, StreamingHttpResponse, JsonResponse
 import requests
 import json
 import urllib.request
@@ -17,8 +17,9 @@ from datetime import datetime
 import pyrebase
 import json
 from django.views.decorators.csrf import csrf_exempt
-
+import time 
 import cv2 
+from django import forms
 
 
 # config = {
@@ -45,9 +46,15 @@ cameras = {
     1: 'rtsp://long:1mrbean3@192.168.1.81:554',
     2: 'rtsp://long:1mrbean3@192.168.1.81:554',
     3: 'rtsp://long:1mrbean3@192.168.1.81:554',
-    4: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
-    5: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
-    6: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
+    # 4: 'rtsp://admin:@192.168.1.82:554',
+    # 5: 'rtsp://admin:@192.168.1.82:554',
+    # 6: 'rtsp://admin:@192.168.1.82:554',
+    # 7: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
+    # 8: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
+    # 9: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
+    # 10: 'rtsp://admin:@192.168.1.82:554',
+    # 11: 'rtsp://admin:@192.168.1.82:554',
+    # 12: 'rtsp://admin:@192.168.1.82:554',
 }
 
 print(db)
@@ -1005,3 +1012,36 @@ def bin_per_level_gen_test(request):
         db.bin_per_level.update_one({'bin_id': id}, {'$set': data}, upsert=True)
 
     return render(request,'sign.html', {'e': 'success'})
+
+class cellForm(forms.Form):
+    weight = forms.IntegerField(min_value=0, required=True)
+    timestamp = forms.IntegerField(required=False)
+
+@csrf_exempt
+def cell_url(request):
+    if request.method == 'POST':
+        form = cellForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            weight = form.cleaned_data.get('weight')
+            timestamp = form.cleaned_data.get('timestamp')
+
+            if timestamp is None: 
+                timestamp = int(time.time())
+
+            data = {"timestamp": timestamp, "weight" : weight}
+            # insert db
+            result = db.cell.insert_one(data)
+            print(data)
+            return JsonResponse({'type':'loadcell','data': data}, status=200)
+        else:
+            return JsonResponse({'message': 'Failed!'}, status=400) 
+    elif request.method == 'GET':
+        for cell in db.cell.find():
+            print(cell)
+        return HttpResponse(status=200)    
+    else: 
+        return JsonResponse({'message': 'Method not allowed!'}, status=405)    
+
+def camera_url(request):
+    pass

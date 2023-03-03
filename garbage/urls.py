@@ -45,5 +45,8 @@ urlpatterns = [
     # url(r'^video/', views.bin_per_level_gen_test,name='bin_test'),
     path(r'garbage_image/<str:vId>/', views.garbage_image),
     url(r'^video_feed/(?P<id>\d+)/$', views.video_feed, name='video_feed'),
-    path('videos/', views.get_video_streams)
+    path('videos/', views.get_video_streams),
+    url(r'^cell', views.cell_url, name='cell'),
+    url(r'^camera', views.camera_url, name='camera')
+
 ];

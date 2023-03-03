@@ -1,0 +1,78 @@
+ffmpeg -i rtsp://admin:@192.168.1.82:554 -vcodec copy -an -f flv rtmp://203.162.10.118:8888//live/test_cam_1
+
+ffmpeg -i rtsp://admin:@192.168.1.82:554 -f webm -vcodec libvpx -acodec libvorbis -deadline realtime -b:v 1000K -crf 30 camera.webm 
+
+ffmpeg -i rtsp://admin:@192.168.1.81:554 -vcodec libvpx -deadline realtime -b:v 1000K -crf 30 rtmp://10.8.0.2/show/live
+
+ffmpeg -i rtsp://admin:@192.168.1.10:554 -f flv -vcodec copy -acodec copy -deadline realtime -b:v 1000K -crf 30 rtmp://10.8.0.2/show
+
+ffmpeg -i rtsp://admin:@192.168.1.82:554 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 800k -r 30 -bf 0 http://203.162.10.118:8888/rtsp_test
+
+ls -l : xem các file có trong thư mục 
+
+sudo nginx -t: verify 
+
+sudo /usr/local/nginx/sbin/nginx -g 'daemon off;'
+
+sudo /usr/local/nginx/sbin/nginx -g 'daemon on; master_process on;' -s reload
+
+
+
+final 
+ffmpeg -i rtsp://admin:@192.168.1.10:554 -f flv -vcodec libx264 -acodec copy -deadline realtime -b:v 1000K -crf 30 rtmp://10.8.0.2/show/live
+
+
+find nginx process id running: 
+ps -ef | grep nginx
+
+-fflags flush_packets
+
+-max_delay 2
+
+python3 -m http.server 8000 # For python 3
+
+sudo nano /usr/local/nginx/conf/nginx.conf
+
+ffmpeg -rtsp_transport tcp -i rtsp://admin:@192.168.1.81:554 -f flv -vcodec libx264 -an -deadline realtime -crf 23 rtmp://203.162.10.118:8000/show/live
+ffmpeg -rtsp_transport tcp -i rtsp://admin:@10.8.0.2:5504 -f flv -vcodec libx264 -an -deadline realtime -crf 23 rtmp://203.162.10.118:8000/show/live
+
+xem port dang dung sudo netstat -tulnp
+
+ps -ef | grep nginx
+
+ffplay http://203.162.10.118:8888/hls/show.m3u8
+
+
+test:
+ffmpeg -i rtsp://admin:@10.8.0.2:5504 -f mpegts -vcodec mpeg1video -an -deadline realtime -crf 23 http://203.162.10.118:8888/feed1.ffm
+
+http://203.162.10.118:8800/hls/live.m3u8
+
+
+forward port:  /usr/bin/python /home/pi/longdq/port-forwarding.py
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ffmpeg -rtsp_transport tcp -i rtsp://admin:@192.168.1.81:554 -f flv -vcodec libx264 -an -b:v 128K -deadline realtime -crf 23 rtmp://203.162.10.118:8000/show/live
+ffmpeg -rtsp_transport tcp -i rtsp://admin:@10.8.0.2:5504 -f flv -vcodec libx264 -an -b:v 128K -deadline realtime -crf 23 rtmp://203.162.10.118:8000/show/live
+
+ffmpeg -rtsp_transport tcp -i rtsp://admin:@192.168.1.10:554 -f flv -vcodec libx264 -an -b:v 128K -crf 23 -flvflags no_duration_filesize rtmp://203.162.10.118:8000/show/live
+
+vpn 
+gmail: longdq.ptit@gmail.com
+password: 7AVgRAjHWYgS3p2
+fc94:b01d:1803:8dd8:b293:5c7d:7639:932a/jLr7pCvcLTAZNs7gpxHxQH
+
+export HUSARNET_JOINCODE="fc94:b01d:1803:8dd8:b293:5c7d:7639:932a/jLr7pCvcLTAZNs7gpxHxQH"
+
+sudo docker run --rm -it \
+--device /dev/snd \
+--device /dev/net/tun \
+--volume husarnet_webrtc_demo_v:/var/lib/husarnet \
+--cap-add NET_ADMIN \
+--sysctl net.ipv6.conf.all.disable_ipv6=0 \
+--env JOINCODE=${HUSARNET_JOINCODE} \
+--env HOSTNAME="webrtc-streamer-1" \
+husarnet/webrtc-streamer:latest
+--input "rtsp://admin:@10.8.0.2:5504"

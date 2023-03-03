@@ -6,15 +6,24 @@ app = Flask(__name__)
 
 def get_camera_url(camera_id):
     cameras = {
-        1: 'rtsp://long:1mrbean3@192.168.1.81:554',
-        2: 'rtsp://long:1mrbean3@192.168.1.81:554',
-        3: 'rtsp://long:1mrbean3@192.168.1.81:554',
-        4: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
-        5: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
-        6: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
-        7: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
-        8: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
-        9: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
+        1: 'rtsp://admin:@192.168.1.82:554',
+        # 2: 'rtsp://long:1mrbean3@192.168.1.81:554',
+        # 3: 'rtsp://long:1mrbean3@192.168.1.81:554',
+        # 4: 'rtsp://admin:@192.168.1.82:554',
+        # 5: 'rtsp://admin:@192.168.1.82:554',
+        # 6: 'rtsp://admin:@192.168.1.82:554',
+        # 7: 'rtsp://iocldg:iocldg123123@14.241.197.248:1518/profile1/media.smp',
+        # 7: 'rtsp://long:1mrbean3@192.168.1.81:554',
+
+        # 8: 'rtsp://long:1mrbean3@192.168.1.81:554',
+        # 9: 'rtsp://long:1mrbean3@192.168.1.81:554',
+        # 10: 'rtsp://admin:@192.168.1.82:554',
+        # 11: 'rtsp://admin:@192.168.1.82:554',
+        # 12: 'rtsp://admin:@192.168.1.82:554',
+        # 13: 'rtsp://admin:@192.168.1.82:554',
+        # 14: 'rtsp://admin:@192.168.1.82:554',
+        # 15: 'rtsp://admin:@192.168.1.82:554',
+        # 9: 'rtsp://long:123456@192.168.1.18:8080/h264_pcm.sdp',
         
     }
 
@@ -37,12 +46,15 @@ def get_frame(url):
             if not cap.isOpened():
                 cap.open(url)
 
-            # Encode the frame to JPEG format
-            ret, jpeg = cv2.imencode('.jpg', frame)
+            if frame is None:
+                pass
+            else:
+                # Encode the frame to JPEG format
+                ret, jpeg = cv2.imencode('.jpg', frame)
 
-            # Return the frame as a response
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+                # Return the frame as a response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
         except Exception as e:
             print(e)
             # Close the video capture object
@@ -58,9 +70,7 @@ def video_feed(camera_id):
     return Response(get_frame(url), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    app.run()
+    # app.run()
     # thread = threading.Thread(target=app.run)
     # thread.start()
-
-
-
+    app.run()
