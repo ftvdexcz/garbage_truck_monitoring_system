@@ -1,0 +1,47 @@
+api: http://203.162.10.118:7000/api/v1/vehicles/check
+
+- request:
+	+ plate: biển số xe
+	+ model: loại xe
+	+ latitude 
+	+ longitude
+	+ binId: id điểm thu gom
+	
+requestBody = {
+	"plate" : "30A-12893",
+	"model" : "McNeilus Split Body",
+	"latitude" : 21.021474,
+	"longitude" : 105.850632,
+	"binId" : 1
+}
+
+
+- response: 
+	+ resCode: status code,
+	+ resMessage: message,
+	+ data: 
+		* id
+		* latitude 
+		* longitude
+		* plate: biển số xe
+		* model: loại xe
+		* binId: id điểm thu gom
+		* status: "valid" or "invalid"
+		* createdAt: thời gian tạo (thời điểm request)
+		* updatedAt: Thời gian cập nhật
+
+response = {
+    "resCode": 200,
+    "resMessage": "Validation for vehicle",
+    "data": {
+        "id": 1,
+        "latitude": 21.021474,
+        "longitude": 105.850632,
+        "plate": "30A-12893",
+        "model": "McNeilus Split Body",
+        "binId": 1,
+        "status": "valid",
+        "updatedAt": "2023-03-17T16:14:01.132Z",
+        "createdAt": "2023-03-17T16:14:01.132Z"
+    }
+}
